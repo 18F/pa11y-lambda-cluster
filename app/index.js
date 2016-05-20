@@ -30,26 +30,28 @@ const createQueue = require('async').queue;
 
 // Change the concurrency here to run more tests in parallel
 const concurrency = process.env.CONCURRENCY;
-const urls = [
-    '18f.gsa.gov',
-    'fcc.gov',
-    'whitehouse.gov',
-    'gsa.gov',
-    'pretrialservices.gov',
-    'empowhr.gov',
-    'ipm.gov',
-    'nel.gov',
-    'recreation.gov',
-    'usda.gov',
-    'symbols.gov',
-    'acus.gov',
-    'fmi.gov',
-    'fedbizopps.gov',
-    'forms.gov',
-    'pif.gov',
-    'pclob.gov',
-    'sam.gov'
-];
+// const urls = [
+//     '18f.gsa.gov',
+//     'fcc.gov',
+//     'whitehouse.gov',
+//     'gsa.gov',
+//     'pretrialservices.gov',
+//     'empowhr.gov',
+//     'ipm.gov',
+//     'nel.gov',
+//     'recreation.gov',
+//     'usda.gov',
+//     'symbols.gov',
+//     'acus.gov',
+//     'fmi.gov',
+//     'fedbizopps.gov',
+//     'forms.gov',
+//     'pif.gov',
+//     'pclob.gov',
+//     'sam.gov'
+// ];
+
+var urls = require('./domains')();
 
 // Create our queue
 const queue = createQueue(processUrl, concurrency);
@@ -85,3 +87,5 @@ function processUrl (url, done) {
 function queueDrained () {
   console.log('All done!');
 }
+
+console.log('Finished scan of ' + urls.length);
