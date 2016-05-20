@@ -53,6 +53,8 @@ Run the cluster:
 docker-compose run web node index.js
 ```
 
+The results of each scan will appear in the `app/results` folder (contents are .gitignored). Each file will be named `{domain}.json` and contain the JSON output from the pa11y scan.
+
 ### Settings
 
 At some point this will all be much easier to configure, but by modifying `app/index.js` you can alter the following:
