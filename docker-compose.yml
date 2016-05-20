@@ -1,0 +1,8 @@
+web:
+  env_file: ./app/.env
+  build: .
+  command: "node index.js"
+  ports:
+    - "8080:8080"
+  volumes:
+    - ./app:/app
