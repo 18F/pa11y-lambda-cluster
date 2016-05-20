@@ -57,13 +57,13 @@ The results of each scan will appear in the `app/results` folder (contents are .
 
 ### Settings
 
+In `app/.env` you can set the concurrency level. It defaults to `4`.
+
 At some point this will all be much easier to configure, but by modifying `app/index.js` you can alter the following:
 
-- `const concurrency` (the number of Lambda functions queued at a time)
 - `const urls` (the URLs to scan)
 
 Currently, `urls` is an array with a sample of 11 .gov URLs.
-
 
 ## Public domain
 

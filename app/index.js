@@ -13,7 +13,8 @@ var scan = function(url, callback) {
     body: {
       url: url,
       pa11yOptions: {
-        standard: 'WCAG2AA'
+        standard: 'WCAG2AA',
+        wait: 500,
       }
     }
   };
@@ -28,7 +29,7 @@ var scan = function(url, callback) {
 const createQueue = require('async').queue;
 
 // Change the concurrency here to run more tests in parallel
-const concurrency = 11;
+const concurrency = process.env.CONCURRENCY;
 const urls = [
     '18f.gsa.gov',
     'fcc.gov',
@@ -40,8 +41,14 @@ const urls = [
     'nel.gov',
     'recreation.gov',
     'usda.gov',
-    'symbols.gov'
-
+    'symbols.gov',
+    'acus.gov',
+    'fmi.gov',
+    'fedbizopps.gov',
+    'forms.gov',
+    'pif.gov',
+    'pclob.gov',
+    'sam.gov'
 ];
 
 // Create our queue
@@ -62,10 +69,12 @@ function processUrl (url, done) {
         console.error(err)
       });
     } else {
-      console.log('Error:');
-      console.log(error);
-      console.log(response);
-      console.log(body);
+      var file = 'results/errors/' + url + '.json'
+      var obj = body;
+
+      jsonfile.writeFile(file, obj, {spaces: 2}, function(err) {
+        console.error(err)
+      });
     }
 
     done();

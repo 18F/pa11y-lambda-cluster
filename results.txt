@@ -1,0 +1,3 @@
+18 domains
+3: docker-compose run web node index.js  0.37s user 0.04s system 0% cpu 1:06.93 total, 1 error (reginfo)
+6: docker-compose run web node index.js  0.36s user 0.04s system 0% cpu 52.016 total, 1 error (reginfo)
