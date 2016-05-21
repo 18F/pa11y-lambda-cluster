@@ -1,57 +1,15 @@
-var request = require('request');
 var jsonfile = require('jsonfile')
+var shuffle = require('shuffle-array')
+var scan = require('/scan');
 
 
-var scan = function(url, callback) {
-  var options = {
-    uri: process.env.API_GATEWAY_ENDPOINT,
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': process.env.API_GATEWAY_KEY
-    },
-    json: true,
-    body: {
-      url: url,
-      pa11yOptions: {
-        standard: 'WCAG2AA',
-        wait: 500,
-      }
-    }
-  };
-
-  var responseHandler = function(error, response, body) {
-    callback(error, response, body);
-  };
-
-  request.post(options, responseHandler);
-};
 
 const createQueue = require('async').queue;
 
 // Change the concurrency here to run more tests in parallel
 const concurrency = process.env.CONCURRENCY;
-// const urls = [
-//     '18f.gsa.gov',
-//     'fcc.gov',
-//     'whitehouse.gov',
-//     'gsa.gov',
-//     'pretrialservices.gov',
-//     'empowhr.gov',
-//     'ipm.gov',
-//     'nel.gov',
-//     'recreation.gov',
-//     'usda.gov',
-//     'symbols.gov',
-//     'acus.gov',
-//     'fmi.gov',
-//     'fedbizopps.gov',
-//     'forms.gov',
-//     'pif.gov',
-//     'pclob.gov',
-//     'sam.gov'
-// ];
 
-var urls = require('./domains')();
+var urls = shuffle(require('./domains')());
 
 // Create our queue
 const queue = createQueue(processUrl, concurrency);
@@ -61,7 +19,9 @@ queue.push(urls); // you could also add them individually
 // Process a URL that was passed into the queue
 function processUrl (url, done) {
   console.log('Beginning scan of: ' + url);
-  scan(url, function(error, response, body) {
+  var endpoint = process.env.API_GATEWAY_ENDPOINT
+  var apiKey = process.env.API_GATEWAY_KEY
+  scan(url, endpoint, apiKey, function(error, response, body) {
     if (!error && response.statusCode == 200) {
       console.log('Finished scan of ' + url);
       var file = 'results/' + url + '.json'

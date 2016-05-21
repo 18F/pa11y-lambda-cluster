@@ -13,7 +13,6 @@ module.exports = function() {
     domains.push(lines[i].toString().split(','));
   }
 
-
   var mappedDomains =  domains.map(function(domain) {
     return domain[0].toLowerCase();
   });
