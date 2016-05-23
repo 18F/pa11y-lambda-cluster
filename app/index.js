@@ -42,7 +42,7 @@ queue.drain = queueDrained;
 console.log(typeof DotgovListFetcher);
 console.log(DotgovListFetcher);
 
-var fetcher = new DotgovListFetcher('2016-05-02-federal.csv');
+var fetcher = new DotgovListFetcher(process.env.DOMAIN_LIST);
 fetcher.perform(function(error, list) {
   var urls = list.map(function(listItem) {
     return listItem['domainName'].toLowerCase();
