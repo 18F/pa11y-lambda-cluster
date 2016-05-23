@@ -4,7 +4,6 @@ var request = require('request');
 var jsonfile = require('jsonfile')
 var DotgovListFetcher = require('dotgov-list');
 
-
 var scan = function(url, callback) {
   var options = {
     uri: process.env.API_GATEWAY_ENDPOINT,
@@ -18,6 +17,7 @@ var scan = function(url, callback) {
       pa11yOptions: {
         standard: 'WCAG2AA',
         wait: 500,
+        ignore: ['notice', 'warning']
       }
     }
   };
@@ -39,8 +39,8 @@ const concurrency = process.env.CONCURRENCY;
 const queue = createQueue(processUrl, concurrency);
 queue.drain = queueDrained;
 
-console.log(typeof DotgovListFetcher);
-console.log(DotgovListFetcher);
+ (typeof DotgovListFetcher);
+ (DotgovListFetcher);
 
 var fetcher = new DotgovListFetcher(process.env.DOMAIN_LIST);
 fetcher.perform(function(error, list) {
@@ -50,24 +50,53 @@ fetcher.perform(function(error, list) {
   queue.push(urls);
 });
 
+function pa11yOutputIsValid(obj) {
+  if (Array.isArray(obj)) {
+
+    if (obj.length > 0) {
+      var firstElement = obj[0];
+
+      if (firstElement.hasOwnProperty('code')) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+
+
+  } else {
+    return false
+  }
+}
 
 // Process a URL that was passed into the queue
 function processUrl(url, done) {
-  console.log('Beginning scan of: ' + url);
+   ('Beginning scan of: ' + url);
   scan(url, function(error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log('Finished scan of ' + url);
-      var file = 'results/' + url + '.json'
-      var obj = body;
+       ('Finished scan of ' + url);
 
-      jsonfile.writeFile(file, obj, {spaces: 2}, function(err) {
-        console.error(err)
-      });
+
+      if (pa11yOutputIsValid(body)) {
+        var file = 'results/' + url + '.json'
+
+        jsonfile.writeFile(file, body, {spaces: 2}, function(err) {
+          console.error(err)
+        });
+      } else {
+        var file = 'results/errors/' + url + '.json'
+
+        jsonfile.writeFile(file, body, {spaces: 2}, function(err) {
+          console.error(err)
+        });
+      }
+
     } else {
       var file = 'results/errors/' + url + '.json'
-      var obj = body;
 
-      jsonfile.writeFile(file, obj, {spaces: 2}, function(err) {
+      jsonfile.writeFile(file, body, {spaces: 2}, function(err) {
         console.error(err)
       });
     }
@@ -78,5 +107,5 @@ function processUrl(url, done) {
 
 // Called when everything's finished
 function queueDrained () {
-  console.log('All done!');
+   ('All done!');
 }
