@@ -1,5 +1,8 @@
+"use strict"
+
 var request = require('request');
 var jsonfile = require('jsonfile')
+var DotgovListFetcher = require('dotgov-list');
 
 
 var scan = function(url, callback) {
@@ -30,36 +33,26 @@ const createQueue = require('async').queue;
 
 // Change the concurrency here to run more tests in parallel
 const concurrency = process.env.CONCURRENCY;
-// const urls = [
-//     '18f.gsa.gov',
-//     'fcc.gov',
-//     'whitehouse.gov',
-//     'gsa.gov',
-//     'pretrialservices.gov',
-//     'empowhr.gov',
-//     'ipm.gov',
-//     'nel.gov',
-//     'recreation.gov',
-//     'usda.gov',
-//     'symbols.gov',
-//     'acus.gov',
-//     'fmi.gov',
-//     'fedbizopps.gov',
-//     'forms.gov',
-//     'pif.gov',
-//     'pclob.gov',
-//     'sam.gov'
-// ];
 
-var urls = require('./domains')();
 
 // Create our queue
 const queue = createQueue(processUrl, concurrency);
 queue.drain = queueDrained;
-queue.push(urls); // you could also add them individually
+
+console.log(typeof DotgovListFetcher);
+console.log(DotgovListFetcher);
+
+var fetcher = new DotgovListFetcher('2016-05-02-federal.csv');
+fetcher.perform(function(error, list) {
+  var urls = list.map(function(listItem) {
+    return listItem['domainName'].toLowerCase();
+  });
+  queue.push(urls);
+});
+
 
 // Process a URL that was passed into the queue
-function processUrl (url, done) {
+function processUrl(url, done) {
   console.log('Beginning scan of: ' + url);
   scan(url, function(error, response, body) {
     if (!error && response.statusCode == 200) {
@@ -87,5 +80,3 @@ function processUrl (url, done) {
 function queueDrained () {
   console.log('All done!');
 }
-
-console.log('Finished scan of ' + urls.length);

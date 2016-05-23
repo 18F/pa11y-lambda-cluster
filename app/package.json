@@ -10,9 +10,10 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "async": "~2.0.0-rc.5",
-    "request": "~2.72.0",
+    "dotgov-list": "18f/dotgov-list-node",
     "http-post": "~0.1.1",
     "jsonfile": "~2.3.1",
+    "request": "~2.72.0",
     "sync-request": "~2.2.0"
   }
 }
